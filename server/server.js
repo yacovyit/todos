@@ -2,12 +2,13 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 var mongoose = require('./db/mongoose');
-const ObjectID = require('mongodb').ObjectID;
+const {ObjectID} = require('mongodb');
 
-var User = require('./models/user').User;
-var Todo = require('./models/todo').Todo;
+var {User} = require('./models/user');
+var {Todo} = require('./models/todo');
 
 var app = express();
+const port = process.env.PORT || 3000;
 //crud api
 app.use(bodyParser.json());
 
@@ -63,8 +64,8 @@ app.get('/todos/:id',(req,res)=>{
 });
 
 //listen
-app.listen('3000',()=>{
-    console.log('Started on port 3000');
+app.listen(port,()=>{
+    console.log(`Started on port ${port}`);
 })
 
 
