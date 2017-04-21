@@ -4,6 +4,7 @@ const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
+const {User} = require('./../models/user');
 
 const todos = [
     {
@@ -16,12 +17,21 @@ const todos = [
         completed: true,
         completedAt: 333
     }
+];
+const users = [
+    {
+    email:"test@gmail.com",
+    password: "123456"
+    }
 ]
 
 beforeEach((done)=>{
     Todo.remove({}).then(()=>{
         return Todo.insertMany(todos);
-    }).then(()=>done())
+    }).then(()=>done());
+    User.remove({}).then(()=>{
+        return User.insertMany(users);
+    });
 });
 
 describe('POST /todos',()=>{
@@ -207,4 +217,38 @@ describe('PATCH /todos/:id', () => {
         //200
         //text is chanched ,completedAs is null,tonotexist
     });
+});
+describe('PST /users',() => {
+    it('shuld create a new user', (done)=>{
+        var user = {
+            email: "user@gmail.com",
+            password: "123456"
+        }
+        request(app)
+        .post('/users')
+        .send(user)
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body.user.email).toBe(user.email);
+            expect(res.body.user.password).toBe(user.password);
+        })
+        .end((err,res)=>{
+           if(err)
+           {
+               return done(err);
+           }
+           User.find({email:user.email}).then((users)=>{
+               expect(users.length).toBe(1);
+               expect(users[0].email).toBe(user.email);
+               done();
+           }).catch((e)=> done(e));
+        })
+    });
+    it('shuld not create a duplicate user', (done)=>{
+        request(app)
+        .post('/users')
+        .send(users[0])
+        .expect(400)
+        .end(done)
+    })
 });
