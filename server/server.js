@@ -88,6 +88,7 @@ app.patch('/todos/:id',(req,res)=>{
         return res.status(404).send();
     }
     if (_.isBoolean(body.completed) && body.completed){
+        body.completed = true;
         body.completedAt = new Date().getTime();
     }else{
         body.completed = false;
