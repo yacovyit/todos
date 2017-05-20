@@ -76,7 +76,6 @@ UserSchema.statics.findByCredentials = function (email,password){
             return Promise.reject();
         };
         return new Promise((resolve,reject)=>{
-            console.log("user " + user);
             //use bycrypt.compare to compare password aand user.password
             bcrypt.compare(password ,user.password,(err,res)=>{
                 console.log('error' + err );
